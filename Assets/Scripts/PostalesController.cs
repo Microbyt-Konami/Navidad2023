@@ -6,6 +6,8 @@ namespace microbytkonamic.navidad
 {
     public class PostalesController : MonoBehaviour
     {
+        public int anyo;
+
         // Start is called before the first frame update
         void Start()
         {

@@ -5,14 +5,16 @@ using UnityEngine;
 
 namespace microbytkonamic.proxy
 {
+    [Serializable]
     public class IntegerInterval
     {
-        public int Start { get; set; }
-        public int End { get; set; }
+        public int start;
+        public int end;
     }
 
+    [Serializable]
     public class IntegerIntervals
     {
-        public IntegerInterval[] Intervals { get; set; }
+        public IntegerInterval[] intervals;
     }
 }

@@ -1,12 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace microbytkonamic.proxy
 {
+    [Serializable]
     public class GetFelicitacionResult
     {
-        public FelicitacionDto FelicitacionDto { get; set; }
-        public IntegerIntervals Intervals { get; set; }
+        [SerializeField] public FelicitacionDto felicitacionDto;
+        [SerializeField] public IntegerIntervals intervals;
     }
 }
