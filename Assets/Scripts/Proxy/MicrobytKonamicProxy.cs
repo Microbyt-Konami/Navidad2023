@@ -3,15 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using microbytkonamic.proxy;
-using System;
+using System.Linq;
 
 namespace microbytkonamic.proxy
 {
     public class MicrobytKonamicProxy : MonoBehaviour
     {
-        public System.Uri urlLocal = new System.Uri("https://localhost:7076");
-        public System.Uri urlServidor = new System.Uri("https://microbykonamic");
+        public string urlLocal = "https://localhost:7076";
+        // Cuando cambiemos a https hay que cambiar roject settings -->Player --> Other settings --> Allow downloads over HTTP
+        public string urlServidor = "http://microbykonamic.es";
         public bool applyUrlLocalInEditor = true;
+
+        //private IEnumerator PostCoroutine<TData, TResult>(string controller, string method, TData postData, System.Func<System.Exception, TResult, IEnumerator> callBack)
+        public IEnumerator PostCoroutine(GetFelicitacionIn input, System.Func<System.Exception, GetFelicitacionResult, IEnumerator> callBack)
+            => PostCoroutine("postales", "getfelicitacion", input, callBack);
 
         // Start is called before the first frame update
         void Start()
@@ -25,9 +30,36 @@ namespace microbytkonamic.proxy
             //StartCoroutine(GetFelicitacion());
         }
 
-        IEnumerator GetFelicitacion(IntegerIntervals intervals, Func<UnityWebRequest, IEnumerator> callBack)
+        private string GetUrlBase()
         {
-            using (var webRequest = UnityWebRequest.Get("https://localhost:7076/api/postales/getfelicitacion"))
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+                return "";
+
+            bool local = Application.isPlaying ? applyUrlLocalInEditor : false;
+            string url = local ? urlLocal : urlServidor;
+
+            if (url.LastOrDefault() == '/')
+                url = url.Substring(0, url.Length - 1);
+
+            return url;
+        }
+
+        private string GetApiUrl(string controller) => $"{GetUrlBase()}/api/{controller}";
+        private string GetApiUrl(string controller, string method) => $"{GetApiUrl(controller)}/{method}";
+        private UnityWebRequest Post(string controller, string method, string postData, string contentType) => UnityWebRequest.Post(GetApiUrl(controller, method), postData, contentType);
+        private UnityWebRequest Post<T>(string controller, string method, T postData) //where T:class
+        {
+            var _postData = JsonUtility.ToJson(postData);
+            var result = Post(controller, method, _postData, "application/json");
+
+            return result;
+        }
+        private IEnumerator PostCoroutine<TData, TResult>(string controller, string method, TData postData, System.Func<System.Exception, TResult, IEnumerator> callBack)
+        {
+            string msg;
+            TResult result;
+
+            using (var webRequest = Post(controller, method, postData))
             {
                 yield return webRequest.SendWebRequest();
 
@@ -35,26 +67,24 @@ namespace microbytkonamic.proxy
                 {
                     case UnityWebRequest.Result.ConnectionError:
                     case UnityWebRequest.Result.DataProcessingError:
-                        Debug.LogError("GetFelicitacion Error: " + webRequest.error);
-                        break;
                     case UnityWebRequest.Result.ProtocolError:
-                        Debug.LogError("GetFelicitacion HTTP Error: " + webRequest.error);
+                        msg = $"{GetApiUrl(controller, method)} postData: {JsonUtility.ToJson(postData)} Error: {webRequest.error}";
+                        Debug.LogError(msg);
+                        yield return StartCoroutine(callBack.Invoke(new UnityException(msg), default(TResult)));
                         break;
                     case UnityWebRequest.Result.Success:
-                        Debug.Log("GetFelicitacion: \nReceived: " + webRequest.downloadHandler.text);
+                        msg = $"{GetApiUrl(controller, method)} postData: {JsonUtility.ToJson(postData)} Received: {webRequest.downloadHandler.text}";
+                        result = JsonUtility.FromJson<TResult>(webRequest.downloadHandler.text);
+                        Debug.Log(msg);                        
+                        yield return StartCoroutine(callBack.Invoke(null, result));
+                        break;
+                    default:
+                        msg = $"{GetApiUrl(controller, method)} postData: {JsonUtility.ToJson(postData)} Result no controller: {webRequest.result}";
+                        Debug.LogError(msg);
+                        yield return StartCoroutine(callBack.Invoke(null, default(TResult)));
                         break;
                 }
-
-                if (callBack != null)
-                    yield return StartCoroutine(callBack.Invoke(webRequest));
             }
-        }
-
-        private System.Uri GetUrlBase()
-        {
-            bool local = Application.isPlaying ? applyUrlLocalInEditor : false;
-
-            return local ? urlLocal : urlServidor;
         }
     }
 }
