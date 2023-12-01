@@ -15,6 +15,7 @@ namespace microbytkonamic.navidad
         public bool terminado;
         public float interval = 5;  // segundos
         public TextMeshProUGUI nickText;
+        public TextMeshProUGUI fechaText;
         public TextMeshProUGUI textoText;
 
         [SerializeField, ReadOnly]
@@ -33,6 +34,9 @@ namespace microbytkonamic.navidad
                     intervals = new IntegerInterval[0]
                 }
             };
+            nickText.text = "";
+            fechaText.text = "";
+            textoText.text = "";
         }
 
         // Start is called before the first frame update
@@ -74,6 +78,8 @@ namespace microbytkonamic.navidad
             }
 
             nickText.text = result.felicitacionDto.nick;
+            //Enviada 30 de Diciembre de 2023
+            fechaText.text = $"Enviada el {result.felicitacionDto?.fecha:D}";
             textoText.text = result.felicitacionDto.texto;
             input.Intervals = result.intervals;
 

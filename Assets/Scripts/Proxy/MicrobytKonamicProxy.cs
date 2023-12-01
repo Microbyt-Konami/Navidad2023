@@ -10,7 +10,8 @@ namespace microbytkonamic.proxy
     public class MicrobytKonamicProxy : MonoBehaviour
     {
         public string urlLocal = "https://localhost:7076";
-        public string urlServidor = "https://microbykonamic";
+        // Cuando cambiemos a https hay que cambiar roject settings -->Player --> Other settings --> Allow downloads over HTTP
+        public string urlServidor = "http://microbykonamic.es";
         public bool applyUrlLocalInEditor = true;
 
         //private IEnumerator PostCoroutine<TData, TResult>(string controller, string method, TData postData, System.Func<System.Exception, TResult, IEnumerator> callBack)
@@ -74,7 +75,7 @@ namespace microbytkonamic.proxy
                     case UnityWebRequest.Result.Success:
                         msg = $"{GetApiUrl(controller, method)} postData: {JsonUtility.ToJson(postData)} Received: {webRequest.downloadHandler.text}";
                         result = JsonUtility.FromJson<TResult>(webRequest.downloadHandler.text);
-                        Debug.Log(msg);
+                        Debug.Log(msg);                        
                         yield return StartCoroutine(callBack.Invoke(null, result));
                         break;
                     default:

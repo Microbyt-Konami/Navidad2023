@@ -9,6 +9,7 @@ namespace microbytkonamic.proxy
     public class FelicitacionDto
     {
         public string nick;
+        public DateTime fecha;
 
         public string texto;
     }
