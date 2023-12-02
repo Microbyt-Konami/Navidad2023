@@ -1,3 +1,4 @@
+using microbytkonamic.navidad;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace microbytkonamic.proxy
     public class FelicitacionDto
     {
         public string nick;
-        public DateTime fecha;
+        public JsonDateTime fecha;
 
         public string texto;
     }

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using microbytkonamic.proxy;
 using Unity.Collections;
 using TMPro;
+using System;
 
 namespace microbytkonamic.navidad
 {
@@ -79,7 +80,7 @@ namespace microbytkonamic.navidad
 
             nickText.text = result.felicitacionDto.nick;
             //Enviada 30 de Diciembre de 2023
-            fechaText.text = $"Enviada el {result.felicitacionDto?.fecha:D}";
+            fechaText.text = $"Enviada el {(DateTime)result.felicitacionDto?.fecha:D}";
             textoText.text = result.felicitacionDto.texto;
             input.Intervals = result.intervals;
 
