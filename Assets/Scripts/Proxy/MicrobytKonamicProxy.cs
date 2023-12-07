@@ -15,8 +15,11 @@ namespace microbytkonamic.proxy
         public bool applyUrlLocalInEditor = true;
 
         //private IEnumerator PostCoroutine<TData, TResult>(string controller, string method, TData postData, System.Func<System.Exception, TResult, IEnumerator> callBack)
-        public IEnumerator PostCoroutine(GetFelicitacionIn input, System.Func<System.Exception, GetFelicitacionResult, IEnumerator> callBack)
+        public IEnumerator GetFelicitacion(GetFelicitacionIn input, System.Func<System.Exception, GetFelicitacionResult, IEnumerator> callBack)
             => PostCoroutine("postales", "getfelicitacion", input, callBack);
+
+        public IEnumerator AltaFelicitacion(AltaFelicitacionIn input, System.Func<System.Exception, IntegerIntervals, IEnumerator> callBack)
+            => PostCoroutine("postales", "altafelicitacion", input, callBack);
 
         // Start is called before the first frame update
         void Start()
@@ -58,10 +61,13 @@ namespace microbytkonamic.proxy
         {
             string msg;
             TResult result;
+            System.Exception ex;
 
             using (var webRequest = Post(controller, method, postData))
             {
                 yield return webRequest.SendWebRequest();
+
+                string text = webRequest.downloadHandler.text;
 
                 switch (webRequest.result)
                 {
@@ -70,12 +76,21 @@ namespace microbytkonamic.proxy
                     case UnityWebRequest.Result.ProtocolError:
                         msg = $"{GetApiUrl(controller, method)} postData: {JsonUtility.ToJson(postData)} Error: {webRequest.error}";
                         Debug.LogError(msg);
-                        yield return StartCoroutine(callBack.Invoke(new UnityException(msg), default(TResult)));
+
+                        if (!string.IsNullOrWhiteSpace(text) && WebApiProblemDetails.TryParseFromJson(text, out var problemDetails))
+                        {
+                            ex = new WebApiProblemDetailsExceptions(problemDetails);
+                            Debug.LogError(ex);
+                        }
+                        else
+                            ex = new WebApiProblemDetailsExceptions(!string.IsNullOrWhiteSpace(text) ? text : webRequest.error);
+
+                        yield return StartCoroutine(callBack.Invoke(ex, default(TResult)));
                         break;
                     case UnityWebRequest.Result.Success:
-                        msg = $"{GetApiUrl(controller, method)} postData: {JsonUtility.ToJson(postData)} Received: {webRequest.downloadHandler.text}";
-                        result = JsonUtility.FromJson<TResult>(webRequest.downloadHandler.text);
-                        Debug.Log(msg);                        
+                        msg = $"{GetApiUrl(controller, method)} postData: {JsonUtility.ToJson(postData)} responseCode: {webRequest.responseCode} Received: {text}";
+                        result = JsonUtility.FromJson<TResult>(text);
+                        Debug.Log(msg);
                         yield return StartCoroutine(callBack.Invoke(null, result));
                         break;
                     default:

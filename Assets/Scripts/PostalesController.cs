@@ -1,7 +1,8 @@
+using microbytkonamic.proxy;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace microbytkonamic.navidad
 {
@@ -14,18 +15,35 @@ namespace microbytkonamic.navidad
         // Start is called before the first frame update
         void Start()
         {
-            DontDestroyOnLoad(this);
-            DontDestroyOnLoad(FindAnyObjectByType<ControlerMusic>());
-            felicitacionController=FindAnyObjectByType<FelicitacionController>();
+            felicitacionController = FindAnyObjectByType<FelicitacionController>();
             altaFelicitacionController = FindAnyObjectByType<AltaFelicitacionController>();
             felicitacionController.enabled = false;
-            altaFelicitacionController.FirstFocus();
+            altaFelicitacionController.ShowButtons();
+            DontDestroyOnLoad(this);
+            DontDestroyOnLoad(FindAnyObjectByType<ControlerMusic>());
+            DontDestroyOnLoad(felicitacionController);
         }
 
         // Update is called once per frame
         void Update()
         {
 
+        }
+
+        public IEnumerator LoadScenePostalCoroutine(FelicitacionDto felicitacionDto = null, IntegerIntervals intervals = null)
+        {
+            if (felicitacionDto != null && intervals != null)
+                felicitacionController.SetFelicitacion(felicitacionDto, intervals);
+
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(1);
+
+            // Wait until the asynchronous scene fully loads
+            while (!asyncLoad.isDone)
+            {
+                yield return null;
+            }
+
+            felicitacionController.enabled = true;
         }
     }
 }
