@@ -1,4 +1,5 @@
 using microbytkonamic.proxy;
+using Microsoft.Win32.SafeHandles;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,12 +10,16 @@ namespace microbytkonamic.navidad
     public class PostalesController : MonoBehaviour
     {
         public int anyo;
-        public FelicitacionController felicitacionController;
-        public AltaFelicitacionController altaFelicitacionController;
+        public AudioClip soundButton;
+        public AudioClip soundError;
+        private AudioSource audioSource;
+        private FelicitacionController felicitacionController;
+        private AltaFelicitacionController altaFelicitacionController;
 
         // Start is called before the first frame update
         void Start()
         {
+            audioSource = GetComponent<AudioSource>();
             felicitacionController = FindAnyObjectByType<FelicitacionController>();
             altaFelicitacionController = FindAnyObjectByType<AltaFelicitacionController>();
             felicitacionController.enabled = false;
@@ -28,6 +33,18 @@ namespace microbytkonamic.navidad
         void Update()
         {
 
+        }
+
+        public void PlaySoundButton()
+        {
+            audioSource.clip = soundButton;
+            audioSource.Play();
+        }
+
+        public void PlaySoundError()
+        {
+            audioSource.clip = soundError;
+            audioSource.Play();
         }
 
         public IEnumerator LoadScenePostalCoroutine(FelicitacionDto felicitacionDto = null, IntegerIntervals intervals = null)

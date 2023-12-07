@@ -113,6 +113,7 @@ namespace microbytkonamic.navidad
 
         private void nickInputField_OnClick(string nick)
         {
+            postalesController.PlaySoundButton();
             ReCalcMsg();
             if (!string.IsNullOrWhiteSpace(nick))
                 textoInputField.Select();
@@ -120,6 +121,7 @@ namespace microbytkonamic.navidad
 
         private void textoInputField_OnClick(string texto)
         {
+            postalesController.PlaySoundButton();
             ReCalcMsg();
             if (!string.IsNullOrWhiteSpace(texto))
                 DlgSubmit();
@@ -127,6 +129,7 @@ namespace microbytkonamic.navidad
 
         private IEnumerator DlgSubmit_Coroutine(FelicitacionDto felicitacionDto)
         {
+            msgLabel.text = "Enviando datos al servidor ...";
             var input = new AltaFelicitacionIn
             {
                 anyo = postalesController.anyo,
@@ -140,6 +143,7 @@ namespace microbytkonamic.navidad
         {
             if (ex != null)
             {
+                postalesController.PlaySoundError();
                 msgLabel.text = ex.Message;
 
                 yield break;
