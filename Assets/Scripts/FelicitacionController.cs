@@ -30,7 +30,7 @@ namespace microbytkonamic.navidad
         {
             nickText.text = felicitacionDto.nick;
             //Enviada 30 de Diciembre de 2023
-            fechaText.text = $"Enviada el {(System.DateTime)felicitacionDto?.fecha:D}";
+            fechaText.text = $"Enviada el {(System.DateTime)felicitacionDto?.fecha:F}";
             textoText.text = felicitacionDto.texto;
             input.Intervals = intervals;
             estado = EstadosFelicitacion.Felicitacion;
@@ -99,11 +99,6 @@ namespace microbytkonamic.navidad
                 yield break;
             }
 
-            //nickText.text = result.felicitacionDto.nick;
-            ////Enviada 30 de Diciembre de 2023
-            //fechaText.text = $"Enviada el {(System.DateTime)result.felicitacionDto?.fecha:D}";
-            //textoText.text = result.felicitacionDto.texto;
-            //input.Intervals = result.intervals;
             yield return StartCoroutine(GetFelicitacion_Coroutine(result.felicitacionDto, result.intervals));
         }
 

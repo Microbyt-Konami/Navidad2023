@@ -494,6 +494,10 @@ PrefabInstance:
       value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 6559157485241232705, guid: c7b8907ee2f8c7f49861f575fd2522e2, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2004
+      objectReference: {fileID: 0}
+    - target: {fileID: 6559157485241232705, guid: c7b8907ee2f8c7f49861f575fd2522e2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -582,81 +586,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3597141888438620856, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3597141888438620856, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3597141888438620856, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3597141888438620856, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3597141888438620856, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3597141888438620856, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5053818549352903504, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5053818549352903504, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5053818549352903504, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5053818549352903504, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5053818549352903504, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6220316546452444028, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6220316546452444028, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6220316546452444028, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6220316546452444028, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6220316546452444028, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6220316546452444028, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6496031311507914516, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
       propertyPath: m_Name
       value: FelicitacionController
-      objectReference: {fileID: 0}
-    - target: {fileID: 6496031311507914516, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8835052184916462142, guid: 74d5e88f7b192474eba770282f189b4c, type: 3}
       propertyPath: m_LocalPosition.x
