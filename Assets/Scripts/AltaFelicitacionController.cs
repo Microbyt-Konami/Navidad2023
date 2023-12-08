@@ -13,12 +13,16 @@ namespace microbytkonamic.navidad
 {
     public class AltaFelicitacionController : MonoBehaviour
     {
+        public GameObject rootPanel;
         public GameObject buttonsPanel;
         public GameObject dialogPanel;
+        public GameObject processPanel;
         public Button anyadirButton;
+        public Button showChristmasButton;
         public TMP_Text msgLabel;
         public TMP_InputField nickInputField;
         public TMP_InputField textoInputField;
+        public TMP_Text processLabel;
 
         MicrobytKonamicProxy proxy;
         PostalesController postalesController;
@@ -33,6 +37,7 @@ namespace microbytkonamic.navidad
         void OnEnable()
         {
             anyadirButton.onClick.AddListener(ShowDialog);
+            showChristmasButton.onClick.AddListener(ShowChristmas);
             nickInputField.onSubmit.AddListener(nickInputField_OnClick);
             textoInputField.onSubmit.AddListener(textoInputField_OnClick);
             ReCalcMsg();
@@ -41,6 +46,7 @@ namespace microbytkonamic.navidad
         void OnDisable()
         {
             anyadirButton.onClick.RemoveListener(ShowDialog);
+            showChristmasButton.onClick.RemoveListener(ShowChristmas);
             nickInputField.onSubmit.RemoveListener(nickInputField_OnClick);
             textoInputField.onSubmit.RemoveListener(textoInputField_OnClick);
         }
@@ -74,6 +80,20 @@ namespace microbytkonamic.navidad
             buttonsPanel.SetActive(false);
             dialogPanel.SetActive(true);
             nickInputField.Select();
+        }
+
+        public void ShowChristmas()
+        {
+            anyadirButton.enabled = false;
+            showChristmasButton.enabled = false;
+            StartCoroutine(postalesController.LoadScenePostalCoroutine());
+        }
+
+        public void HideAll()
+        {
+            rootPanel.SetActive(false);
+            buttonsPanel.SetActive(false);
+            dialogPanel.SetActive(false);
         }
 
         public void ReCalcMsg()
@@ -129,7 +149,10 @@ namespace microbytkonamic.navidad
 
         private IEnumerator DlgSubmit_Coroutine(FelicitacionDto felicitacionDto)
         {
-            msgLabel.text = "Enviando datos al servidor ...";
+            dialogPanel.SetActive(false);
+            processPanel.SetActive(true);
+            processLabel.text = "Enviando datos al servidor ...";
+
             var input = new AltaFelicitacionIn
             {
                 anyo = postalesController.anyo,
@@ -143,12 +166,18 @@ namespace microbytkonamic.navidad
         {
             if (ex != null)
             {
+                processLabel.text = ex.Message;
                 postalesController.PlaySoundError();
-                msgLabel.text = ex.Message;
+
+                yield return new WaitForSeconds(5);
+
+                dialogPanel.SetActive(true);
+                processPanel.SetActive(false);
 
                 yield break;
             }
-            yield break;
+
+            yield return StartCoroutine(postalesController.LoadScenePostalCoroutine(felicitacionDto, intervals));
         }
     }
 }

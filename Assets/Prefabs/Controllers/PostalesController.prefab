@@ -48,6 +48,10 @@ MonoBehaviour:
   anyo: 2023
   soundButton: {fileID: 8300000, guid: 6eb4be97b31b251e692f8d90374de5bf, type: 3}
   soundError: {fileID: 8300000, guid: faf9a08488e52818c8c155e62e92988c, type: 3}
+  proxy: {fileID: 0}
+  felicitacionController: {fileID: 0}
+  altaFelicitacionController: {fileID: 0}
+  controlerMusic: {fileID: 0}
 --- !u!82 &1558110366401645638
 AudioSource:
   m_ObjectHideFlags: 0

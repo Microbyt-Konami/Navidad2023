@@ -10,6 +10,12 @@ namespace microbytkonamic.navidad
 
         private AudioSource audioSource;
 
+        private void Awake()
+        {
+            if (PostalesController.isRunning)
+                Destroy(this.gameObject);
+        }
+
         // Start is called before the first frame update
         void Start()
         {

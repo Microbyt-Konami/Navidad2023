@@ -1,9 +1,11 @@
-using microbytkonamic.proxy;
 using Microsoft.Win32.SafeHandles;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
+using microbytkonamic.proxy;
 
 namespace microbytkonamic.navidad
 {
@@ -14,19 +16,46 @@ namespace microbytkonamic.navidad
         public AudioClip soundError;
         private AudioSource audioSource;
         private FelicitacionController felicitacionController;
-        private AltaFelicitacionController altaFelicitacionController;
+        private static PostalesController instance;
+
+        public static bool isRunning { get; private set; }
+
+        private void Awake()
+        {
+            if (instance == null)
+            {
+                instance = this;
+                audioSource = GetComponent<AudioSource>();
+                DontDestroyOnLoad(this.gameObject);
+            }
+            else
+            {
+                instance.felicitacionController.gameObject.SetActive(true);
+                Destroy(this.gameObject);
+            }
+        }
 
         // Start is called before the first frame update
         void Start()
         {
-            audioSource = GetComponent<AudioSource>();
-            felicitacionController = FindAnyObjectByType<FelicitacionController>();
-            altaFelicitacionController = FindAnyObjectByType<AltaFelicitacionController>();
-            felicitacionController.enabled = false;
-            altaFelicitacionController.ShowButtons();
-            DontDestroyOnLoad(this);
-            DontDestroyOnLoad(FindAnyObjectByType<ControlerMusic>());
-            DontDestroyOnLoad(felicitacionController);
+            try
+            {
+                var controlerMusic = FindAnyObjectByType<ControlerMusic>();
+                var proxy = FindAnyObjectByType<MicrobytKonamicProxy>();
+                felicitacionController = FindAnyObjectByType<FelicitacionController>();
+
+                var altaFelicitacionController = FindAnyObjectByType<AltaFelicitacionController>();
+
+                altaFelicitacionController.ShowButtons();
+                felicitacionController.gameObject.SetActive(false);
+                DontDestroyOnLoad(FindAnyObjectByType<ControlerMusic>().gameObject);
+                DontDestroyOnLoad(FindAnyObjectByType<MicrobytKonamicProxy>().gameObject);
+                DontDestroyOnLoad(felicitacionController.gameObject);
+            }
+            finally
+            {
+                isRunning = true;
+            }
         }
 
         // Update is called once per frame
@@ -50,7 +79,7 @@ namespace microbytkonamic.navidad
         public IEnumerator LoadScenePostalCoroutine(FelicitacionDto felicitacionDto = null, IntegerIntervals intervals = null)
         {
             if (felicitacionDto != null && intervals != null)
-                felicitacionController.SetFelicitacion(felicitacionDto, intervals);
+                felicitacionController.StartSetFelicitacion(felicitacionDto, intervals);
 
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(1);
 
@@ -59,8 +88,6 @@ namespace microbytkonamic.navidad
             {
                 yield return null;
             }
-
-            felicitacionController.enabled = true;
         }
     }
 }

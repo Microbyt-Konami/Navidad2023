@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using microbytkonamic.proxy;
 using System.Linq;
+using microbytkonamic.navidad;
 
 namespace microbytkonamic.proxy
 {
@@ -20,6 +21,12 @@ namespace microbytkonamic.proxy
 
         public IEnumerator AltaFelicitacion(AltaFelicitacionIn input, System.Func<System.Exception, IntegerIntervals, IEnumerator> callBack)
             => PostCoroutine("postales", "altafelicitacion", input, callBack);
+
+        private void Awake()
+        {
+            if (PostalesController.isRunning)
+                Destroy(this.gameObject);
+        }
 
         // Start is called before the first frame update
         void Start()

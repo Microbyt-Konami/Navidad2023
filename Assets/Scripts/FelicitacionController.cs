@@ -37,8 +37,19 @@ namespace microbytkonamic.navidad
             print(intervals);
         }
 
+        public void StartSetFelicitacion(FelicitacionDto felicitacionDto, IntegerIntervals intervals)
+        {
+            StartCoroutine(GetFelicitacion_Coroutine(felicitacionDto, intervals));
+        }
+
         private void Awake()
         {
+            if (PostalesController.isRunning)
+            {
+                Destroy(this.gameObject);
+
+                return;
+            }
             estado = EstadosFelicitacion.GetFelicitacion;
             input = new GetFelicitacionIn
             {
@@ -93,9 +104,12 @@ namespace microbytkonamic.navidad
             //fechaText.text = $"Enviada el {(System.DateTime)result.felicitacionDto?.fecha:D}";
             //textoText.text = result.felicitacionDto.texto;
             //input.Intervals = result.intervals;
-            SetFelicitacion(result.felicitacionDto, result.intervals);
+            yield return StartCoroutine(GetFelicitacion_Coroutine(result.felicitacionDto, result.intervals));
+        }
 
-
+        IEnumerator GetFelicitacion_Coroutine(FelicitacionDto felicitacionDto, IntegerIntervals intervals)
+        {
+            SetFelicitacion(felicitacionDto, intervals);
 
             yield return new WaitForSeconds(interval);
 
