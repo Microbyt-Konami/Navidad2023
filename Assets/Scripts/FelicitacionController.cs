@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
-
-using microbytkonamic.proxy;
 using Unity.Collections;
 using TMPro;
-using System;
+
+using microbytkonamic.proxy;
+using static UnityEngine.Networking.UnityWebRequest;
 
 namespace microbytkonamic.navidad
 {
@@ -25,8 +26,30 @@ namespace microbytkonamic.navidad
         PostalesController postalesController;
         GetFelicitacionIn input;
 
+        public void SetFelicitacion(FelicitacionDto felicitacionDto, IntegerIntervals intervals)
+        {
+            nickText.text = felicitacionDto.nick;
+            //Enviada 30 de Diciembre de 2023
+            fechaText.text = $"Enviada el {(System.DateTime)felicitacionDto?.fecha:D}";
+            textoText.text = felicitacionDto.texto;
+            input.Intervals = intervals;
+            estado = EstadosFelicitacion.Felicitacion;
+            print(intervals);
+        }
+
+        public void StartSetFelicitacion(FelicitacionDto felicitacionDto, IntegerIntervals intervals)
+        {
+            StartCoroutine(GetFelicitacion_Coroutine(felicitacionDto, intervals));
+        }
+
         private void Awake()
         {
+            if (PostalesController.isRunning)
+            {
+                Destroy(this.gameObject);
+
+                return;
+            }
             estado = EstadosFelicitacion.GetFelicitacion;
             input = new GetFelicitacionIn
             {
@@ -35,9 +58,7 @@ namespace microbytkonamic.navidad
                     intervals = new IntegerInterval[0]
                 }
             };
-            nickText.text = "";
-            fechaText.text = "";
-            textoText.text = "";
+            nickText.text = fechaText.text = textoText.text = string.Empty;
         }
 
         // Start is called before the first frame update
@@ -64,10 +85,10 @@ namespace microbytkonamic.navidad
             estado = EstadosFelicitacion.WaitFelicitacion;
             input.Anyo = postalesController.anyo;
 
-            yield return StartCoroutine(proxy.PostCoroutine(input, Callback_GetFelicitacion));
+            yield return StartCoroutine(proxy.GetFelicitacion(input, GetFelicitacion_Callback));
         }
 
-        IEnumerator Callback_GetFelicitacion(System.Exception ex, GetFelicitacionResult result)
+        IEnumerator GetFelicitacion_Callback(System.Exception ex, GetFelicitacionResult result)
         {
             if (terminado)
                 yield break;
@@ -78,15 +99,17 @@ namespace microbytkonamic.navidad
                 yield break;
             }
 
-            nickText.text = result.felicitacionDto.nick;
-            //Enviada 30 de Diciembre de 2023
-            fechaText.text = $"Enviada el {(DateTime)result.felicitacionDto?.fecha:D}";
-            textoText.text = result.felicitacionDto.texto;
-            input.Intervals = result.intervals;
+            //nickText.text = result.felicitacionDto.nick;
+            ////Enviada 30 de Diciembre de 2023
+            //fechaText.text = $"Enviada el {(System.DateTime)result.felicitacionDto?.fecha:D}";
+            //textoText.text = result.felicitacionDto.texto;
+            //input.Intervals = result.intervals;
+            yield return StartCoroutine(GetFelicitacion_Coroutine(result.felicitacionDto, result.intervals));
+        }
 
-            print(result.intervals);
-
-            estado = EstadosFelicitacion.Felicitacion;
+        IEnumerator GetFelicitacion_Coroutine(FelicitacionDto felicitacionDto, IntegerIntervals intervals)
+        {
+            SetFelicitacion(felicitacionDto, intervals);
 
             yield return new WaitForSeconds(interval);
 
