@@ -1,0 +1,4 @@
+. Fullscreen en webgl ejecutando en android/i o mirar si es app nativa en android y ejecutarla. Sino icono de fullscreen arriba a la derecha
+. Multiidoma
+. Arreglar problema tex field en android
+. webapi para cargar musica navidad

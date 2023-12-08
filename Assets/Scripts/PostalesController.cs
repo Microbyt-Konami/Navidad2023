@@ -51,6 +51,15 @@ namespace microbytkonamic.navidad
                 DontDestroyOnLoad(FindAnyObjectByType<ControlerMusic>().gameObject);
                 DontDestroyOnLoad(FindAnyObjectByType<MicrobytKonamicProxy>().gameObject);
                 DontDestroyOnLoad(felicitacionController.gameObject);
+#if !UNITY_EDITOR && UNITY_WEBGL
+                /*
+                    Typically, introducing HTML elements (such as text fields) can cause errors if included in the web page that’s meant to receive keyboard inputs. 
+                    Unity consumes the input events before the rest of the page can receive them.
+                    To make HTML elements receive a keyboard input, set WebGLInput.captureAllKeyboardInput to false. This way, the application receives input only if the WebGL canvas has focus
+                 */
+                // disable WebGLInput.captureAllKeyboardInput so elements in web page can handle keyboard inputs
+                WebGLInput.captureAllKeyboardInput = false;
+#endif
             }
             finally
             {
