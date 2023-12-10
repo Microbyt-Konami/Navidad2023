@@ -8,7 +8,7 @@ using microbytkonamic.navidad;
 
 namespace microbytkonamic.proxy
 {
-    public class MicrobytKonamicProxy : MonoBehaviour
+    public class MicrobytKonamicProxy : MonoBehaviourSingleton<MicrobytKonamicProxy>
     {
         public string urlLocal = "https://localhost:7076";
         // Cuando cambiemos a https hay que cambiar roject settings -->Player --> Other settings --> Allow downloads over HTTP
@@ -21,24 +21,6 @@ namespace microbytkonamic.proxy
 
         public IEnumerator AltaFelicitacion(AltaFelicitacionIn input, System.Func<System.Exception, IntegerIntervals, IEnumerator> callBack)
             => PostCoroutine("postales", "altafelicitacion", input, callBack);
-
-        private void Awake()
-        {
-            if (PostalesController.isRunning)
-                Destroy(this.gameObject);
-        }
-
-        // Start is called before the first frame update
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            //StartCoroutine(GetFelicitacion());
-        }
 
         private string GetUrlBase()
         {

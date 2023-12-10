@@ -11,7 +11,7 @@ using static UnityEngine.Networking.UnityWebRequest;
 
 namespace microbytkonamic.navidad
 {
-    public class FelicitacionController : MonoBehaviour
+    public class FelicitacionController : MonoBehaviourSingleton<FelicitacionController>
     {
         public bool inicio;
         public bool terminado;
@@ -22,8 +22,6 @@ namespace microbytkonamic.navidad
 
         [SerializeField, ReadOnly]
         EstadosFelicitacion estado;
-        MicrobytKonamicProxy proxy;
-        PostalesController postalesController;
         GetFelicitacionIn input;
 
         public void SetFelicitacion(FelicitacionDto felicitacionDto, IntegerIntervals intervals)
@@ -34,22 +32,20 @@ namespace microbytkonamic.navidad
             textoText.text = felicitacionDto.texto;
             input.Intervals = intervals;
             estado = EstadosFelicitacion.Felicitacion;
-            print(intervals);
         }
 
-        public void StartSetFelicitacion(FelicitacionDto felicitacionDto, IntegerIntervals intervals)
+        public Coroutine StartFelicitacion() => StartCoroutine(GetFelicitacion_Coroutine());
+
+        public Coroutine StartFelicitacion(FelicitacionDto felicitacionDto, IntegerIntervals intervals)
         {
-            StartCoroutine(GetFelicitacion_Coroutine(felicitacionDto, intervals));
+            SetFelicitacion(felicitacionDto, intervals);
+
+            return StartFelicitacion();
         }
 
-        private void Awake()
+        protected override void Awake()
         {
-            if (PostalesController.isRunning)
-            {
-                Destroy(this.gameObject);
-
-                return;
-            }
+            base.Awake();
             estado = EstadosFelicitacion.GetFelicitacion;
             input = new GetFelicitacionIn
             {
@@ -59,13 +55,6 @@ namespace microbytkonamic.navidad
                 }
             };
             nickText.text = fechaText.text = textoText.text = string.Empty;
-        }
-
-        // Start is called before the first frame update
-        void Start()
-        {
-            proxy = FindObjectOfType<MicrobytKonamicProxy>();
-            postalesController = FindAnyObjectByType<PostalesController>();
         }
 
         // Update is called once per frame
@@ -83,9 +72,9 @@ namespace microbytkonamic.navidad
         IEnumerator GetFelicitacion()
         {
             estado = EstadosFelicitacion.WaitFelicitacion;
-            input.Anyo = postalesController.anyo;
+            input.Anyo = PostalesController.Instance.anyo;
 
-            yield return StartCoroutine(proxy.GetFelicitacion(input, GetFelicitacion_Callback));
+            yield return StartCoroutine(MicrobytKonamicProxy.Instance.GetFelicitacion(input, GetFelicitacion_Callback));
         }
 
         IEnumerator GetFelicitacion_Callback(System.Exception ex, GetFelicitacionResult result)
@@ -99,12 +88,11 @@ namespace microbytkonamic.navidad
                 yield break;
             }
 
-            yield return StartCoroutine(GetFelicitacion_Coroutine(result.felicitacionDto, result.intervals));
+            yield return StartFelicitacion(result.felicitacionDto, result.intervals);
         }
 
-        IEnumerator GetFelicitacion_Coroutine(FelicitacionDto felicitacionDto, IntegerIntervals intervals)
+        IEnumerator GetFelicitacion_Coroutine()
         {
-            SetFelicitacion(felicitacionDto, intervals);
 
             yield return new WaitForSeconds(interval);
 

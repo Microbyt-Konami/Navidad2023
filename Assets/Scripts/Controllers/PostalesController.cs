@@ -9,48 +9,30 @@ using microbytkonamic.proxy;
 
 namespace microbytkonamic.navidad
 {
-    public class PostalesController : MonoBehaviour
+    public class PostalesController : MonoBehaviourSingleton<PostalesController>
     {
         public int anyo;
         public AudioClip soundButton;
         public AudioClip soundError;
         private AudioSource audioSource;
-        private FelicitacionController felicitacionController;
-        private static PostalesController instance;
 
-        public static bool isRunning { get; private set; }
-
-        private void Awake()
+        protected override void Awake()
         {
-            if (instance == null)
-            {
-                instance = this;
+            base.Awake();
+            if (isInstanceAsigned)
                 audioSource = GetComponent<AudioSource>();
-                DontDestroyOnLoad(this.gameObject);
-            }
-            else
-            {
-                instance.felicitacionController.gameObject.SetActive(true);
-                Destroy(this.gameObject);
-            }
         }
 
         // Start is called before the first frame update
         void Start()
         {
-            try
+            var altaFelicitacionController = FindAnyObjectByType<AltaFelicitacionController>();
+
+            if (altaFelicitacionController != null)
             {
-                var controlerMusic = FindAnyObjectByType<ControlerMusic>();
-                var proxy = FindAnyObjectByType<MicrobytKonamicProxy>();
-                felicitacionController = FindAnyObjectByType<FelicitacionController>();
-
-                var altaFelicitacionController = FindAnyObjectByType<AltaFelicitacionController>();
-
                 altaFelicitacionController.ShowButtons();
-                felicitacionController.gameObject.SetActive(false);
-                DontDestroyOnLoad(FindAnyObjectByType<ControlerMusic>().gameObject);
-                DontDestroyOnLoad(FindAnyObjectByType<MicrobytKonamicProxy>().gameObject);
-                DontDestroyOnLoad(felicitacionController.gameObject);
+                FelicitacionController.Instance.gameObject.SetActive(false);
+            }
 #if !UNITY_EDITOR && UNITY_WEBGL
                 /*
                     Typically, introducing HTML elements (such as text fields) can cause errors if included in the web page that’s meant to receive keyboard inputs. 
@@ -60,17 +42,6 @@ namespace microbytkonamic.navidad
                 // disable WebGLInput.captureAllKeyboardInput so elements in web page can handle keyboard inputs
                 WebGLInput.captureAllKeyboardInput = false;
 #endif
-            }
-            finally
-            {
-                isRunning = true;
-            }
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
         }
 
         public void PlaySoundButton()
@@ -87,12 +58,23 @@ namespace microbytkonamic.navidad
 
         public IEnumerator LoadScenePostalCoroutine(FelicitacionDto felicitacionDto = null, IntegerIntervals intervals = null)
         {
-            if (felicitacionDto != null && intervals != null)
-                felicitacionController.StartSetFelicitacion(felicitacionDto, intervals);
+            var sceneAct = SceneManager.GetActiveScene();
 
-            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(1);
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
 
             // Wait until the asynchronous scene fully loads
+            while (!asyncLoad.isDone)
+            {
+                yield return null;
+            }
+
+            FelicitacionController.Instance.gameObject.SetActive(true);
+
+            if (felicitacionDto != null && intervals != null)
+                FelicitacionController.Instance.StartFelicitacion(felicitacionDto, intervals);
+
+            asyncLoad = SceneManager.UnloadSceneAsync(sceneAct);
+
             while (!asyncLoad.isDone)
             {
                 yield return null;

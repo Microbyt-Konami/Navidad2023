@@ -24,9 +24,6 @@ namespace microbytkonamic.navidad
         public TMP_InputField textoInputField;
         public TMP_Text processLabel;
 
-        MicrobytKonamicProxy proxy;
-        PostalesController postalesController;
-
         private void Awake()
         {
             nickInputField.text = textoInputField.text = string.Empty;
@@ -49,13 +46,6 @@ namespace microbytkonamic.navidad
             showChristmasButton.onClick.RemoveListener(ShowChristmas);
             nickInputField.onSubmit.RemoveListener(nickInputField_OnClick);
             textoInputField.onSubmit.RemoveListener(textoInputField_OnClick);
-        }
-
-        // Start is called before the first frame update
-        void Start()
-        {
-            proxy = FindObjectOfType<MicrobytKonamicProxy>();
-            postalesController = FindAnyObjectByType<PostalesController>();
         }
 
         // Update is called once per frame
@@ -86,7 +76,7 @@ namespace microbytkonamic.navidad
         {
             anyadirButton.enabled = false;
             showChristmasButton.enabled = false;
-            StartCoroutine(postalesController.LoadScenePostalCoroutine());
+            StartCoroutine(PostalesController.Instance.LoadScenePostalCoroutine());
         }
 
         public void HideAll()
@@ -133,7 +123,7 @@ namespace microbytkonamic.navidad
 
         private void nickInputField_OnClick(string nick)
         {
-            postalesController.PlaySoundButton();
+            PostalesController.Instance.PlaySoundButton();
             ReCalcMsg();
             if (!string.IsNullOrWhiteSpace(nick))
                 textoInputField.Select();
@@ -141,7 +131,7 @@ namespace microbytkonamic.navidad
 
         private void textoInputField_OnClick(string texto)
         {
-            postalesController.PlaySoundButton();
+            PostalesController.Instance.PlaySoundButton();
             ReCalcMsg();
             if (!string.IsNullOrWhiteSpace(texto))
                 DlgSubmit();
@@ -155,11 +145,11 @@ namespace microbytkonamic.navidad
 
             var input = new AltaFelicitacionIn
             {
-                anyo = postalesController.anyo,
+                anyo = PostalesController.Instance.anyo,
                 felicitacionDto = felicitacionDto
             };
 
-            yield return StartCoroutine(proxy.AltaFelicitacion(input, (ex, i) => AltaFelicitacion_Callback(felicitacionDto, ex, i)));
+            yield return StartCoroutine(MicrobytKonamicProxy.Instance.AltaFelicitacion(input, (ex, i) => AltaFelicitacion_Callback(felicitacionDto, ex, i)));
         }
 
         private IEnumerator AltaFelicitacion_Callback(FelicitacionDto felicitacionDto, Exception ex, IntegerIntervals intervals)
@@ -167,7 +157,7 @@ namespace microbytkonamic.navidad
             if (ex != null)
             {
                 processLabel.text = ex.Message;
-                postalesController.PlaySoundError();
+                PostalesController.Instance.PlaySoundError();
 
                 yield return new WaitForSeconds(5);
 
@@ -177,7 +167,7 @@ namespace microbytkonamic.navidad
                 yield break;
             }
 
-            yield return StartCoroutine(postalesController.LoadScenePostalCoroutine(felicitacionDto, intervals));
+            yield return StartCoroutine(PostalesController.Instance.LoadScenePostalCoroutine(felicitacionDto, intervals));
         }
     }
 }

@@ -1,26 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Transactions;
 using UnityEngine;
 
 namespace microbytkonamic.navidad
 {
-    public class ControlerMusic : MonoBehaviour
+    public class ControlerMusic : MonoBehaviourSingleton<ControlerMusic>
     {
         public AudioClip[] musics;
 
         private AudioSource audioSource;
 
-        private void Awake()
+        protected override void Awake()
         {
-            if (PostalesController.isRunning)
-                Destroy(this.gameObject);
+            base.Awake();
+            if (isInstanceAsigned)
+                audioSource = GetComponent<AudioSource>();
         }
 
         // Start is called before the first frame update
         void Start()
         {
-            audioSource = GetComponent<AudioSource>();
-
             if (musics == null || musics.Length == 0)
                 return;
 
