@@ -6,9 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Main.unity
-    guid: 44ad1ac54ea312b4fbdfdb9d4974c226
-  - enabled: 1
     path: Assets/Scenes/postal2023.unity
     guid: d28ef66e3e2320f489c49b1ee741f80a
   m_configObjects: {}

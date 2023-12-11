@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   urlLocal: https://localhost:7076
-  urlServidor: http://microbykonamic.es
-  applyUrlLocalInEditor: 0
+  urlServidor: https://microbykonamic.es
+  applyUrlLocalInEditor: 1
