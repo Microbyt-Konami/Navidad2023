@@ -141,19 +141,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f816f7911bcb68d4bad750863c756101, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  musics:
-  - {fileID: 8300000, guid: ce366d346bd2de24f8ad23a2d209bbd6, type: 3}
-  - {fileID: 8300000, guid: 1d5665696062d734b94a1886275d4f5d, type: 3}
-  - {fileID: 8300000, guid: 0a814b97b437db74cb4edd1cdbc7f6aa, type: 3}
-  - {fileID: 8300000, guid: 5e39aa69c6757c64bb63bf6cb7948ee7, type: 3}
-  - {fileID: 8300000, guid: 7c5954c1c78743e49b003dd15e943e3f, type: 3}
-  - {fileID: 8300000, guid: e17d564370ff19041ba15be355d80366, type: 3}
-  - {fileID: 8300000, guid: edb048e7395847845a4d15acd54a0804, type: 3}
-  - {fileID: 8300000, guid: fcc8f755c1f8a4f46b3605f544dc5895, type: 3}
-  - {fileID: 8300000, guid: 6a0950e98a6289f4aabfc071245f2f52, type: 3}
-  - {fileID: 8300000, guid: c40e956c45eb38b429ae959a1aa721a7, type: 3}
-  - {fileID: 8300000, guid: d9c1bacdd90cb4d4f922eae71dc4b6e2, type: 3}
-  - {fileID: 8300000, guid: 669e50a7082ea4f4e9ecefd34dae82bd, type: 3}
-  - {fileID: 8300000, guid: 7552951a9c76d6944b47219e4b4ea528, type: 3}
-  - {fileID: 8300000, guid: f2dd7e4d2a010774ab1f059378509123, type: 3}
-  - {fileID: 8300000, guid: 2c49b5f746e3906428f464733e1d54bc, type: 3}
+  musics: []
+  isMusicsRemote: 1
