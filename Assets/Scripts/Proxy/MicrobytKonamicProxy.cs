@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 using microbytkonamic.proxy;
 using System.Linq;
 using microbytkonamic.navidad;
+using static UnityEngine.Networking.UnityWebRequest;
 
 namespace microbytkonamic.proxy
 {
@@ -12,7 +13,7 @@ namespace microbytkonamic.proxy
     {
         public string urlLocal = "https://localhost:7076";
         // Cuando cambiemos a https hay que cambiar roject settings -->Player --> Other settings --> Allow downloads over HTTP
-        public string urlServidor = "http://microbykonamic.es";
+        public string urlServidor = "http://www.microbykonamic.es";
         public bool applyUrlLocalInEditor = true;
 
         //private IEnumerator PostCoroutine<TData, TResult>(string controller, string method, TData postData, System.Func<System.Exception, TResult, IEnumerator> callBack)
@@ -21,6 +22,8 @@ namespace microbytkonamic.proxy
 
         public IEnumerator AltaFelicitacion(AltaFelicitacionIn input, System.Func<System.Exception, IntegerIntervals, IEnumerator> callBack)
             => PostCoroutine("postales", "altafelicitacion", input, callBack);
+
+        public IEnumerator MusicaNavidadMP3(System.Func<System.Exception, AudioClip, IEnumerator> callBack) => GetAudioClipCoroutine("PostalNavidenya", "MusicaNavidadMP3", callBack);
 
         private string GetUrlBase()
         {
@@ -38,6 +41,7 @@ namespace microbytkonamic.proxy
 
         private string GetApiUrl(string controller) => $"{GetUrlBase()}/api/{controller}";
         private string GetApiUrl(string controller, string method) => $"{GetApiUrl(controller)}/{method}";
+        private string GetActionUrl(string controller, string action) => $"{GetUrlBase()}/{controller}/{action}";
         private UnityWebRequest Post(string controller, string method, string postData, string contentType) => UnityWebRequest.Post(GetApiUrl(controller, method), postData, contentType);
         private UnityWebRequest Post<T>(string controller, string method, T postData) //where T:class
         {
@@ -46,6 +50,9 @@ namespace microbytkonamic.proxy
 
             return result;
         }
+
+        private UnityWebRequest GetAudioClip(string controller, string action) => UnityWebRequestMultimedia.GetAudioClip(GetActionUrl(controller, action), AudioType.MPEG);
+
         private IEnumerator PostCoroutine<TData, TResult>(string controller, string method, TData postData, System.Func<System.Exception, TResult, IEnumerator> callBack)
         {
             string msg;
@@ -87,6 +94,29 @@ namespace microbytkonamic.proxy
                         Debug.LogError(msg);
                         yield return StartCoroutine(callBack.Invoke(null, default(TResult)));
                         break;
+                }
+            }
+        }
+
+        private IEnumerator GetAudioClipCoroutine(string controller, string action, System.Func<System.Exception, AudioClip, IEnumerator> callBack)
+        {
+            string msg;
+
+            using (var webRequest = GetAudioClip(controller, action))
+            {
+                yield return webRequest.SendWebRequest();
+
+                if (webRequest.result == Result.Success)
+                {
+                    msg = $"{GetActionUrl(controller, action)} responseCode: {webRequest.responseCode}";
+                    Debug.Log(msg);
+                    yield return StartCoroutine(callBack.Invoke(null, DownloadHandlerAudioClip.GetContent(webRequest)));
+                }
+                else
+                {
+                    msg = $"{GetActionUrl(controller, action)} Error: {webRequest.error}";
+                    Debug.LogError(msg);
+                    yield return StartCoroutine(callBack.Invoke(new WebApiProblemDetailsExceptions(webRequest.error), null));
                 }
             }
         }
