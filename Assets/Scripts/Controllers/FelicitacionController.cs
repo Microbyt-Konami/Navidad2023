@@ -15,7 +15,8 @@ namespace microbytkonamic.navidad
     {
         public bool inicio;
         public bool terminado;
-        public float interval = 5;  // segundos
+        public float intervaloEntreFelicitaciones = 5;  // segundos
+        public float intervaloEntreLetras = 30f / 60f;  // segundos
         public TextMeshProUGUI nickText;
         public TextMeshProUGUI fechaText;
         public TextMeshProUGUI textoText;
@@ -34,7 +35,7 @@ namespace microbytkonamic.navidad
             estado = EstadosFelicitacion.Felicitacion;
         }
 
-        public Coroutine StartFelicitacion() => StartCoroutine(GetFelicitacion_Coroutine());
+        public Coroutine StartFelicitacion() => StartCoroutine(PonerFelicitacion());
 
         public Coroutine StartFelicitacion(FelicitacionDto felicitacionDto, IntegerIntervals intervals)
         {
@@ -91,15 +92,30 @@ namespace microbytkonamic.navidad
             yield return StartFelicitacion(result.felicitacionDto, result.intervals);
         }
 
-        IEnumerator GetFelicitacion_Coroutine()
+        IEnumerator RevelarTextoPocoAPoco()
         {
+            textoText.ForceMeshUpdate();
 
-            yield return new WaitForSeconds(interval);
+            var longitudTexto = textoText.textInfo.characterCount;
+
+            for (var i = 1; i <= longitudTexto; i++)
+            {
+                textoText.maxVisibleCharacters = i;
+
+                yield return new WaitForSeconds(intervaloEntreLetras);
+            }
+        }
+
+        IEnumerator PonerFelicitacion()
+        {
+            yield return StartCoroutine(RevelarTextoPocoAPoco());
+
+            yield return new WaitForSeconds(intervaloEntreFelicitaciones);
 
             if (terminado)
                 yield break;
 
-            estado = EstadosFelicitacion.GetFelicitacion;
+            yield return StartCoroutine(GetFelicitacion());
         }
     }
 }
