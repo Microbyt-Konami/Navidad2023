@@ -417,7 +417,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inicio: 1
   terminado: 0
-  interval: 5
+  intervaloEntreFelicitaciones: 5
+  intervaloEntreLetras: 0.9
   nickText: {fileID: 6464950431720917374}
   fechaText: {fileID: 4428411338294298567}
   textoText: {fileID: 1599508520504726250}
