@@ -1,4 +1,5 @@
 using Microsoft.Win32.SafeHandles;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -12,6 +13,7 @@ namespace microbytkonamic.navidad
     public class PostalesController : MonoBehaviourSingleton<PostalesController>
     {
         public int anyo;
+        public bool calcularAnyo;
         public AudioClip soundButton;
         public AudioClip soundError;
         private AudioSource audioSource;
@@ -26,6 +28,9 @@ namespace microbytkonamic.navidad
         // Start is called before the first frame update
         void Start()
         {
+            if(calcularAnyo)
+                anyo = CalcAnyo(DateTime.Now);
+            
             var altaFelicitacionController = FindAnyObjectByType<AltaFelicitacionController>();
 
             if (altaFelicitacionController != null)
@@ -35,7 +40,7 @@ namespace microbytkonamic.navidad
             }
 #if !UNITY_EDITOR && UNITY_WEBGL
                 /*
-                    Typically, introducing HTML elements (such as text fields) can cause errors if included in the web page that’s meant to receive keyboard inputs. 
+                    Typically, introducing HTML elements (such as text fields) can cause errors if included in the web page thatï¿½s meant to receive keyboard inputs. 
                     Unity consumes the input events before the rest of the page can receive them.
                     To make HTML elements receive a keyboard input, set WebGLInput.captureAllKeyboardInput to false. This way, the application receives input only if the WebGL canvas has focus
                  */
@@ -54,6 +59,14 @@ namespace microbytkonamic.navidad
         {
             audioSource.clip = soundError;
             audioSource.Play();
+        }
+        
+        public int CalcAnyo(DateTime date)
+        {
+            var month = date.Month;
+            var year = month switch { 12 => date.Year, _ => date.Year - 1 };
+
+            return year;
         }
 
         public IEnumerator LoadScenePostalCoroutine(FelicitacionDto felicitacionDto = null, IntegerIntervals intervals = null)
